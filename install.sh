@@ -62,9 +62,18 @@ say '3/7 生成本机配置'
 cd "$WC_HOME"
 ./webcodex init --no-tunnel >/dev/null 2>&1 || true
 
-say '4/7 修复启动脚本（官方脚本写死了 node 路径，升级后会失效）'
+say '4/7 修复两处官方安装器的遗留问题'
+# 4a 配置文件的硬链接数必须等于 1，否则 doctor / connect 全部报 CONFIG_ERROR
+NLINK=$(ls -l "$WC_HOME/config.toml" 2>/dev/null | awk '{print $2}')
+if [ -n "$NLINK" ] && [ "$NLINK" != '1' ]; then
+  cp "$WC_HOME/config.toml" "$WC_HOME/.config.new" && mv "$WC_HOME/.config.new" "$WC_HOME/config.toml"
+  chmod 600 "$WC_HOME/config.toml"
+  info '已修复配置文件的硬链接计数'
+fi
+# 4b 官方启动脚本写死了 node 绝对路径，Node 升级后会失效
 APPDIR=$(ls -d "$WC_HOME"/app/*/ 2>/dev/null | tail -1)
 APPBASE=$(basename "${APPDIR%/}")
+[ -n "$APPBASE" ] || die "没找到 WebCodex 程序目录（$WC_HOME/app），官方安装器可能失败了"
 cat > "$WC_HOME/webcodex" <<EOS
 #!/bin/sh
 set -eu
@@ -157,7 +166,13 @@ chmod +x "${HOME}/Applications/WebCodex.app/Contents/MacOS/WebCodex" \
 info '已生成：应用程序/WebCodex.app、应用程序/停止WebCodex.app'
 
 say '7/7 本机自检'
-./webcodex doctor 2>/dev/null | head -30 || true
+DOCTOR=$(./webcodex doctor 2>&1 || true)
+echo "$DOCTOR" | head -40
+if echo "$DOCTOR" | grep -q '"ok"[[:space:]]*:[[:space:]]*true'; then
+  info '自检通过'
+else
+  info '自检没通过。看上面的报错，对照 docs/troubleshooting.md 处理'
+fi
 
 cat <<'EOF'
 
