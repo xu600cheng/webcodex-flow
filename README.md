@@ -56,12 +56,16 @@ sh install.sh --workspace "$HOME/Desktop/我的项目"
 
 ## 日常怎么用：四步循环
 
-| 步骤 | 谁干 | 干什么 |
-|---|---|---|
-| 1 | 桌面 Codex | 澄清需求 → 产出 `docs/PRD.md`、`docs/DEV.md`、`AGENTS.md`（任务清单） |
-| 2 | 网页 ChatGPT | 照着文档，**一次只做一条任务** |
-| 3 | 桌面 Codex | 按 PRD 红线验收，列出问题并直接改 |
-| 4 | 桌面 Codex | 更新任务清单，回到第 2 步 |
+| 步骤 | 谁干 | 干什么 | 你要手动搬的东西 | 
+|---|---|---|---|
+| 1 | 桌面 Codex | 澄清需求 → 产出 `docs/PRD.md`、`docs/DEV.md`、`AGENTS.md`（任务清单）→ 生成派工单 `docs/DISPATCH-00N.md` | **一行**：`读 <项目>/docs/DISPATCH-001.md，照着做。` |
+| 2 | 网页 ChatGPT | 照派工单**一次只做一条任务**，代码直写本机；完工把报告写回同一份派工单 | 无（代码自动落盘） |
+| 3 | 桌面 Codex | **一行**：`看 docs/DISPATCH-001.md 的产出，按 PRD 验收。`它自己读文件 | **一行** |
+| 4 | 桌面 Codex | 更新任务清单，生成下一张派工单，回到第 2 步 | 无 |
+
+> **你只搬文本，从不搬代码。** 这一步最容易搞混：网页端写的不是聊天记录里的代码块，
+> 它通过隧道**直接写进你本机那个文件夹**，改完在编辑器里就能看到。
+> 而文本搬运已经被压到一行——因为三条路径全写在那份派工单里，网页端自己读。
 
 模板都在 `templates/` 里，直接复制：
 
@@ -70,7 +74,8 @@ sh install.sh --workspace "$HOME/Desktop/我的项目"
 | `CODEX_INIT_PROMPT.md` | **每个新项目发一次**，让桌面 Codex 学会这套流程并写进它自己的记忆 |
 | `AGENTS_COLLAB.md` | 粘进项目 `AGENTS.md` 的协作章节 |
 | `PRD_TEMPLATE.md` / `DEV_TEMPLATE.md` | 新项目起步时的文档骨架 |
-| `WEB_DISPATCH.md` | 网页端派工提示词模板 |
+| `DISPATCH_CARD.md` | **派工单（落盘版）**，让桌面端把派工写成文件，你只需复制一行 |
+| `WEB_DISPATCH.md` | 网页端派工：一句话版（推荐）+ 整段版（临时加约束时用） |
 | `REVIEW_PROMPT.md` | 回桌面 Codex 验收用 |
 
 ### 三条红线

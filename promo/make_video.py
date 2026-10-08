@@ -212,15 +212,57 @@ def s7(t, d, bg):
     put(d, 'webcodex-flow · 双枪干活套件', W / 2, 1300, F(34), MUTED, a5)
 
 
+# 配音文本。[[slnc N]] 是静音毫秒，用来制造停顿，避免念经感。
+# 想换音色：设环境变量 VOICE，或把录好的音频放到 promo/voice/v0.wav … v6.wav
 SCENES = [
-    (3.5, s1, (60, 120, 220), (0.5, 0.35), 'Codex 的额度，又用完了吧？'),
-    (3.5, s2, (47, 191, 113), (0.55, 0.4), '其实你还有一整份额度，一次都没动过。'),
-    (4.5, s3, (74, 158, 255), (0.5, 0.3), '桌面 Codex 写方案，网页 ChatGPT 写代码。'),
-    (4.0, s4, (160, 140, 255), (0.5, 0.45), '中间的通道叫 WebCodex，让网页端直接读写你本机的项目。'),
-    (4.5, s5, (47, 191, 113), (0.5, 0.35), '一条命令装好，剩下的三步，跟着做就行。'),
-    (4.5, s6, (224, 163, 62), (0.5, 0.4), '记住三条：方案落成文件，一次只派一条，动手前先复述。'),
-    (4.5, s7, (74, 158, 255), (0.5, 0.35), '开源免费，仓库地址就在屏幕上，装上就能用。'),
+    (3.5, s1, (60, 120, 220), (0.5, 0.35),
+     'Codex 的额度，又用完了吧？[[slnc 260]]五小时一档，跑两个任务就没了。'),
+    (3.5, s2, (47, 191, 113), (0.55, 0.4),
+     '其实你还有一整份额度，[[slnc 200]]一次都没用过。[[slnc 300]]网页聊天和 Codex，是分开算的。'),
+    (4.5, s3, (74, 158, 255), (0.5, 0.3),
+     '桌面 Codex 写方案，[[slnc 180]]网页 ChatGPT 写代码。[[slnc 300]]贵的额度，只花在想清楚这件事上。'),
+    (4.0, s4, (160, 140, 255), (0.5, 0.45),
+     '中间缺的那截，叫 WebCodex。[[slnc 240]]它让网页端，直接读写你本机的项目。'),
+    (4.5, s5, (47, 191, 113), (0.5, 0.35),
+     '一条命令装好。[[slnc 220]]剩下的三步，跟着做，十分钟搞定。'),
+    (4.5, s6, (224, 163, 62), (0.5, 0.4),
+     '记住三条。[[slnc 200]]方案必须落成文件。[[slnc 160]]一次只派一条任务。[[slnc 160]]动手前，让它先复述一遍。'),
+    (4.5, s7, (74, 158, 255), (0.5, 0.35),
+     '已经开源了，[[slnc 180]]MIT 协议，免费。[[slnc 260]]一条命令，装上就能用。'),
 ]
+
+VOICE_RATE = os.environ.get('VOICE_RATE', '158')
+VOICE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'voice')
+
+
+def pick_voice():
+    """自动挑本机最好的中文音色：优先增强 / 高级 / 神经网络版，否则退回 Tingting。"""
+    if os.environ.get('VOICE'):
+        return os.environ['VOICE']
+    try:
+        out = subprocess.run(['say', '-v', '?'], capture_output=True, text=True).stdout
+    except Exception:
+        return 'Tingting'
+    cands = []
+    for line in out.splitlines():
+        if 'zh_CN' not in line:
+            continue
+        name = line.split('#')[0].strip().rsplit('  ', 1)[0].strip()
+        cands.append(name)
+    if not cands:
+        return 'Tingting'
+    score = {'premium': 4, 'enhanced': 3, 'neural': 3, 'siri': 3, 'compact': -1}
+    def rank(n):
+        low = n.lower()
+        s = sum(v for k, v in score.items() if k in low)
+        if 'tingting' in low:
+            s += 1
+        return s
+    cands.sort(key=rank, reverse=True)
+    return cands[0]
+
+
+VOICE = pick_voice()
 
 
 def main():
@@ -230,15 +272,30 @@ def main():
     os.makedirs(tmp, exist_ok=True)
 
     # 1) 配音
+    print('使用音色：', VOICE)
+
+    def have_external():
+        return all(os.path.exists(os.path.join(VOICE_DIR, f'v{i}.wav'))
+                   for i in range(len(SCENES)))
+
+    if have_external():
+        print('检测到 promo/voice/ 里的外部音频，使用你的录音')
     print('生成配音...')
     voice_parts = []
     for i, (dur, _, _, _, line) in enumerate(SCENES):
-        aiff = f'{tmp}/v{i}.aiff'
         wav = f'{tmp}/v{i}.wav'
-        subprocess.run(['say', '-v', 'Tingting', '-o', aiff, line], check=True)
-        subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', aiff, '-af',
-                        f'apad,atrim=0:{dur},asetpts=N/SR/TB', '-ar', '44100', '-ac', '2', wav],
-                       check=True)
+        ext = os.path.join(VOICE_DIR, f'v{i}.wav')
+        if os.path.exists(ext):
+            # 用你自己的录音 / 别的 TTS 导出的音频
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', ext, '-af',
+                            f'apad,atrim=0:{dur},asetpts=N/SR/TB', '-ar', '44100', '-ac', '2', wav],
+                           check=True)
+        else:
+            aiff = f'{tmp}/v{i}.aiff'
+            subprocess.run(['say', '-v', VOICE, '-r', VOICE_RATE, '-o', aiff, line], check=True)
+            subprocess.run(['ffmpeg', '-y', '-loglevel', 'error', '-i', aiff, '-af',
+                            f'apad,atrim=0:{dur},asetpts=N/SR/TB,volume=1.6',
+                            '-ar', '44100', '-ac', '2', wav], check=True)
         voice_parts.append(wav)
     lst = f'{tmp}/list.txt'
     with open(lst, 'w') as f:
