@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>双枪干活 · 通用流程</title>
+<style>
+  :root{ --bg:#0f141a; --card:#171e26; --line:#262f3a; --txt:#e8edf3; --dim:#8b97a6;
+         --acc:#4da3ff; --ok:#3ddc84; --warn:#ffb454; --code:#0a0e13; }
+  *{box-sizing:border-box}
+  body{margin:0;padding:36px 20px 80px;background:var(--bg);color:var(--txt);
+       font:15px/1.75 -apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;}
+  .wrap{max-width:860px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:.5px}
+  .lead{color:var(--dim);font-size:14px;margin-bottom:30px}
+  h2{font-size:18px;margin:36px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+  h3{font-size:15px;margin:22px 0 10px;color:var(--acc)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:12px}
+  .hero{background:linear-gradient(135deg,#16283d,#171e26);border-color:#2a4560}
+  .hero b{color:var(--acc)}
+  code{background:var(--code);border:1px solid var(--line);border-radius:6px;
+       padding:2px 7px;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;color:#9fe0ff}
+  pre{background:var(--code);border:1px solid var(--line);border-radius:8px;padding:12px 14px;
+      overflow-x:auto;font:13px/1.65 ui-monospace,SFMono-Regular,Menlo,monospace;color:#cfe3f5;margin:10px 0}
+  pre .cm{color:#6b7c8f}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+  th{background:#1b232d;color:var(--dim);font-weight:600;font-size:13px}
+  .tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;margin-right:6px}
+  .t-you{background:rgba(255,180,84,.14);color:var(--warn)}
+  .t-auto{background:rgba(61,220,132,.14);color:var(--ok)}
+  .t-none{background:rgba(139,151,166,.14);color:var(--dim)}
+  .warn{border-left:3px solid var(--warn)}
+  .ok{border-left:3px solid var(--ok)}
+  ol,ul{padding-left:22px;margin:8px 0}
+  li{margin:5px 0}
+  .kb{color:var(--dim);font-size:13px}
+  .bigline{font:15px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace;color:#9fe0ff;
+           background:var(--code);border:1px dashed #2f4a63;border-radius:8px;padding:12px 14px;margin:10px 0}
+  .foot{color:var(--dim);font-size:12px;margin-top:36px;padding-top:14px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>双枪干活 · 通用流程</h1>
+  <div class="lead">桌面端（贵、强）想清楚 → 网页端（便宜、弱一档）搬砖 → 桌面端验收。<br>
+  最新版：搬运已经压到<b>一行</b>。</div>
+
+  <div class="card hero">
+    <b>一句话：</b>你只搬「一行字」，从不搬代码。<br>
+    网页端写的代码通过隧道<b>直接写进你本机那个文件夹</b>，改完在编辑器里就能看到。<br>
+    你要做的全部动作 = 在两边各贴一行指令。
+  </div>
+
+  <div class="card ok">
+    <b>先记住这三行，剩下的都可以忘。</b>
+    <div class="bigline">① 派工：读 &lt;项目名&gt;/docs/DISPATCH-001.md，照着做。</div>
+    <div class="bigline">② 验收：看 docs/DISPATCH-001.md 这条任务的产出，按 PRD 验收。</div>
+    <div class="bigline">③ 续摊：通过后更新 AGENTS.md，并给出下一条任务的派工单和那一行话。</div>
+  </div>
+
+  <h2>四步循环</h2>
+  <table>
+    <tr><th style="width:52px">步</th><th style="width:120px">谁干</th><th>干什么</th><th style="width:210px">你要手动搬的</th></tr>
+    <tr>
+      <td>1</td><td>桌面 Codex</td>
+      <td>澄清需求 → 写 <code>docs/PRD.md</code>、<code>docs/DEV.md</code>、<code>AGENTS.md</code>（任务清单）→ 生成派工单 <code>docs/DISPATCH-00N.md</code></td>
+      <td><span class="tag t-you">一行</span>粘贴 ① 到网页端</td>
+    </tr>
+    <tr>
+      <td>2</td><td>网页 ChatGPT</td>
+      <td>照派工单<b>一次只做一条</b>，代码直写本机；完工把报告写回同一份派工单文件</td>
+      <td><span class="tag t-none">无</span>代码自动落盘</td>
+    </tr>
+    <tr>
+      <td>3</td><td>桌面 Codex</td>
+      <td>贴 ②，它自己读文件验收；严重的直接改</td>
+      <td><span class="tag t-you">一行</span>粘贴 ②</td>
+    </tr>
+    <tr>
+      <td>4</td><td>桌面 Codex</td>
+      <td>贴 ③，更新清单 → 出下一张派工单 → 回到第 2 步</td>
+      <td><span class="tag t-none">无</span>跟着第 1 步走</td>
+    </tr>
+  </table>
+
+  <h3>为什么只有一行就够了</h3>
+  <p>以前派工要把「项目路径 + 读哪几份文档 + 做什么 + 规矩 + 验证命令」一整段复制过去。
+  现在这些<b>全写在派工单文件里</b>，网页端自己读——它本来就能通过隧道读你本机文件。</p>
+  <pre>docs/DISPATCH-001.md  ← 桌面端生成，网页端读，网页端写回完工报告，桌面端验收再读一次
+                           ↑ 这三趟往返，你一次都不用搬内容</pre>
+  <p class="kb">什么时候退回「整段派工」：任务跨很多文件、上一轮跑偏要额外强调、方案还没定死。
+  这三种情况让桌面端把整段提示词吐在代码块里。</p>
+
+  <h2>两条最容易搞混的</h2>
+  <div class="card">
+    <b>① 网页端写的东西会自动落盘吗？</b><br>
+    会。它不是在聊天框里吐代码块让你拷——它直接改你本机那个文件夹里的文件。
+    判断标准：<b>本地文件真的变了才算数</b>，它嘴上说"已写入"而文件夹没动静，就是没动手。
+    让它报实际调用的工具名（正常能看到 <code>fs_write</code> / <code>fs_apply_patch</code>）。
+  </div>
+  <div class="card warn">
+    <b>② 两边看不到对方的聊天记录。</b><br>
+    唯一的桥是硬盘上的文件。你在网页端多说了半句要求，桌面端永远不知道——
+    所以凡是"要记住的规矩"，必须让它<b>写进文件</b>（PRD / DEV / AGENTS / 派工单）。
+  </div>
+
+  <h2>三条红线</h2>
+  <ol>
+    <li><b>方案必须落成文件</b>，对话里说过的话另一边永远看不到</li>
+    <li><b>一次只派一条任务</b>，派一堆只会得到一堆半成品</li>
+    <li><b>动手前让它复述理解</b>，几乎零成本，能挡掉一半返工</li>
+  </ol>
+
+  <h2>开工前检查三件事</h2>
+  <ol>
+    <li>双击「应用程序 / <b>WebCodex.app</b>」——等它弹出浏览器（约 40 秒握手，别提前关）</li>
+    <li>网页端必须是<b>「聊天」模式</b>，不是工作区 / Codex 模式</li>
+    <li>输入时要用 <b><code>@WebCodex</code></b> 或 ➕ 唤出它</li>
+  </ol>
+
+  <h2>换个项目怎么用</h2>
+  <p>改三处即可，以「神笔马良」为例：</p>
+  <table>
+    <tr><th style="width:150px">地方</th><th>填什么</th></tr>
+    <tr><td>面板里的<b>工作区路径</b></td><td><code>/Users/cijiu/Desktop/神笔马良</code>（本机绝对路径）</td></tr>
+    <tr><td>面板里的<b>工作区名称</b></td><td>随便填，自己认得就行（<code>神笔马良</code>）</td></tr>
+    <tr><td>派工那一行</td><td><code>读 神笔马良/docs/DISPATCH-001.md，照着做。</code>（相对路径）</td></tr>
+  </table>
+  <p class="kb">更省事的做法：工作区指向一个「项目大本营」目录，下面每个子目录是一个项目，加一次永久通用。</p>
+
+  <h2>给桌面端的一次性初始化提示词</h2>
+  <p class="kb">新项目发一次，在已经聊了一段的老会话里发效果最好（它熟悉现状）。完整版在仓库 <code>templates/CODEX_INIT_PROMPT.md</code>，核心是这段：</p>
+  <pre><span class="cm"># 要点，不用照抄原文，讲清这五件事即可</span>
+1. 我装了 WebCodex，网页 ChatGPT 能直接读写本项目目录
+2. 两份额度分开算；分工：你写方案和文档，网页端写代码
+3. 方案必须落成 docs/PRD.md、docs/DEV.md、AGENTS.md
+4. 每次派工写成 docs/DISPATCH-00N.md，并给我一行「读 xxx/DISPATCH-00N.md，照着做。」
+   不要把派工内容整段吐给我
+5. 网页端完工报告要写回同一个派工单文件，你验收时自己读，别让我搬</pre>
+
+  <h2>排错</h2>
+  <table>
+    <tr><th style="width:200px">现象</th><th>怎么办</th></tr>
+    <tr><td>网页端说"已写入"，本地没变化</td><td>没真动手。让它报工具名和错误码；确认是<b>聊天模式</b>且用了 <code>@WebCodex</code></td></tr>
+    <tr><td>网页端读不到文件</td><td>WebCodex 没起来，或工作区路径没指向这个目录。回面板核对后<b>重启服务</b></td></tr>
+    <tr><td>提示"No space / port occupied"</td><td>端口被上一个实例占了。双击<b>停止</b>那个 app，再双击启动</td></tr>
+    <tr><td>启动器打不开（隔离提示）</td><td>文件被桌面整理工具挪过会带上系统枷锁。<code>xattr -d com.apple.quarantine</code> 解掉</td></tr>
+    <tr><td>Node 升级后突然启动不了</td><td>官方脚本写死了 node 路径。已改成运行时自动找，若仍失败重装一次</td></tr>
+  </table>
+
+  <div class="foot">
+    这套方法已开源：<code>github.com/xu600cheng/webcodex-flow</code>（MIT）<br>
+    一句实话：网页端模型比桌面端弱一档，所以第 3 步的验收不能省——质量靠流程兜，不靠模型自觉。
+  </div>
+
+</div>
+</body>
+</html>
